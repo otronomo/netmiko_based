@@ -35,6 +35,6 @@ host1 = {
 }
 
 print("Calling func...")
-arp = get_arp_ios(host1)
+arp = get_arp_ios(host1, vrf="ABC")
 
-print(arp)
+pprint(arp)
