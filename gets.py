@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # By NOMO
 
-<<<<<<< HEAD
+
 from netmiko import Netmiko
 from getpass import getpass
 from pprint import pprint
@@ -36,8 +36,6 @@ host1 = {
 }
 
 
-=======
->>>>>>> 763944c8be58268fb9196688b169421ab6dfa6ea
 
 
 
