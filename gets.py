@@ -120,3 +120,21 @@ def get_ver_ios(host_dict):
     return output
 
 
+# Returns formatted sh ver
+# LIST of DICTs 
+def get_mac_address_table(host_dict):
+    hostname = host_dict['host']
+    #print("Trying connection to " + hostname)
+    try:
+    # Establish connection
+        connection = Netmiko(**host_dict)
+    except:
+        print("get_mac_address_table - Could not establish ssh connection to host" + hostname)
+        return -1
+    # Run command with textfsm - this should return structured data
+    #print("Running command")
+    output = connection.send_command("sh mac addr", use_textfsm = True)
+    # Return structured data
+    #print("Returning output")
+    return output
+
