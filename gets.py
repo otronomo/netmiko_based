@@ -53,7 +53,7 @@ def get_ip_int_bri_ios(host_dict):
 # your template repo and add it to the ntc-templates index file.
 def get_int_desc_ios(host_dict):
     hostname = host_dict['host']
-    print("Trying connection to " + hostname)
+    #print("Trying connection to " + hostname)
     try:
     # Establish connection
         connection = Netmiko(**host_dict)
@@ -64,8 +64,26 @@ def get_int_desc_ios(host_dict):
     print("Running command")
     output = connection.send_command("sh int desc", use_textfsm = True)
     # Return structured data
-    print("Returning output")
+    #print("Returning output")
     return output
 
+
+# Returns formatted sh cdp neig description
+# LIST of DICTS
+def get_cdp_neig_ios(host_dict):
+    hostname = host_dict['host']
+    #print("Trying connection to " + hostname)
+    try:
+    # Establish connection
+        connection = Netmiko(**host_dict)
+    except:
+        print("get_cdp_neig_ios - Could not establish ssh connection to host" + hostname)
+        return -1
+    # Run command with textfsm - this should return structured data
+    #print("Running command")
+    output = connection.send_command("sh cdp neig", use_textfsm = True)
+    # Return structured data
+    #print("Returning output")
+    return output
 
 
