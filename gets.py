@@ -138,3 +138,21 @@ def get_mac_address_table(host_dict):
     #print("Returning output")
     return output
 
+
+# Takes host and MAC as arguments
+# Returns formated list of single Dict for the CAM entry for the MAC
+def get_one_mac_address(host_dict, mac_addr):
+    hostname = host_dict['host']
+    #print("Trying connection to " + hostname)
+    try:
+    # Establish connection
+        connection = Netmiko(**host_dict)
+    except:
+        print("get_one_mac_address - Could not establish ssh connection to host" + hostname)
+        return -1
+    # Run command with textfsm - this should return structured data
+    #print("Running command")
+    output = connection.send_command("sh mac addr add %s" %(mac_addr), use_textfsm = True)
+    # Return structured data
+    #print("Returning output")
+    return output
