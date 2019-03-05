@@ -4,16 +4,28 @@
 print("debug0")
 
 from netmiko import Netmiko
-from getpass import getpass
+print("debug0.0")
 from pprint import pprint
-import re
 
 print("debug1")
+
+# Takes switch host dict and mac. Returns formatted output.
+def get_one_mac_address(mac, switch, username, password, device_type):
+    host = {
+    'host': switch,
+    'username': username,
+    'password': password,
+    'device_type': device_type,
+    }
+    conn1 = Netmiko(**host)
+    output = conn1.send_command("sh mac add add %s" %(mac), use_textfsm = True)
+    return output
+
 
 l3_device_list = "l3_device_list.txt"
 l2_device_list = "l2_device_list.txt"
 
-mac_addr = "aabb.cc00.1010"
+mac_addr = "aabb.cc00.8000"
 
 
 print("debug2")
@@ -27,13 +39,10 @@ except:
     print("Couldn't open file")
 
 for switch in switch_list:
-    #get_one_mac_address(switch, mac_addr)
-    pprint(switch)        
+    print("Calling func with arg:" + switch)
+    mac_table_entry = get_one_mac_address(mac_addr, switch, "cisco", "cisco", "cisco_ios")
+    if isinstance(mac_table_entry,list):
+        pprint(mac_table_entry)
 
 print("debug3")
 
-print("debug4")
-
-print("debug5")
-
-print("debug6")
