@@ -1,17 +1,13 @@
 #!/usr/bin/python3
 # By NOMO
 
-print("debug0")
 
 from netmiko import Netmiko
-print("debug0.0")
 from pprint import pprint
-print("debug0.00")
 from getpass  import getpass
-print("debug0.00")
 import re
 
-debug = 1
+debug = 0
 
 def debug_switch(debug, string_to_print):
     if debug == 1:
@@ -20,14 +16,14 @@ def debug_switch(debug, string_to_print):
 
 l3_device_list = "l3_device_list.txt"
 l2_device_list = "l2_device_list.txt"
-'''
+
 user_input = input("\nInsert IP address or MAC address: ").strip()
 username = input("Insert user to log in to devices: ").strip()
 password = getpass()
-'''
-user_input = "aabb.cc00.8000"
-username = "cisco"
-password = "cisco"
+
+#user_input = "10.30.30.125"
+#username = "cisco"
+#password = "cisco"
 mac = "1"
 
 # From https://stackoverflow.com/questions/10086572/ip-address-validation-in-python-using-regex
@@ -64,14 +60,40 @@ else:
           "  XXXX.XXXX.XXXX\n")
     exit()
 
+# If userinput is an IP address
 if input_type == "IP":    
     ip = user_input
+    router_list = []
+    try:
+        with open(l3_device_list) as file_handle:
+            router_list = file_handle.read().splitlines()
+    except:
+        print("Couldn't open file")
 
+    for router in router_list:
+        host = {
+        'host': router,
+        'username': username,
+        'password': password,
+        'device_type': "cisco_ios",
+        }
+        conn1 = Netmiko(**host)
+        output = conn1.send_command("sh ip arp | i %s" %(ip), use_textfsm = True)
+
+        if isinstance(output,list):
+            print("\nFound ARP entry for %s in %s interface %s\n" %(ip, router, output[0]['interface']))
+            #pprint(output)
+            mac = output[0]['mac']
+        
 
 elif input_type == "MAC":
     mac = user_input
     debug_switch(debug,"--------DEBUG----------MAC is user input. Value: " + mac)
-    
+
+else:
+    print("\nSomething went wrong. No MAC address found. Not sure why.")
+    exit()
+
 # At this point, take MAC no matter where it came from (user or ARP table) and search
 # in all switches:
     
@@ -81,7 +103,7 @@ try:
     with open(l2_device_list) as file_handle:
         switch_list = file_handle.read().splitlines()
 except:
-    print("Couldn't open file")
+    print("\nCouldn't open file\n")
 
 for switch in switch_list:
     host = {
@@ -90,22 +112,11 @@ for switch in switch_list:
     'password': password,
     'device_type': "cisco_ios",
     }
-    print("Calling func with arg:" + switch)
+    print("Connecting to " + switch)
     conn1 = Netmiko(**host)
     output = conn1.send_command("sh mac add add %s" %(mac), use_textfsm = True)
 
     if isinstance(output,list):
-        pprint(output)
-
-
-# By this point, user_input should have been identified as MAC, IP or smthing else.
-# This "else" clause shour never run but just in case...
-else:
-    print("\nSomething went wrong. No MAC address found. Not sure why.")
-    exit()
-
-
-# At this point, take MAC no matter where it came from (user or ARP table) and search
-# in all switches:
+        print("\nFound MAC entry for %s in switch %s interface %s\n" %(mac, switch, output[0]['destination_port']))
 
 
