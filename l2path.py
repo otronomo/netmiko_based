@@ -94,8 +94,10 @@ def getNextHopIp(host_ip, destination_ip, conn_handle):
         # Store all available next-hop IPs in a list.
         elif re.search( r"^\s+(.+\d+\.\d+\.\d+\.\d)", line ) != None:            
             #ip_next_hop = re.search( r"^\s+\D+(\d+\.\d+\.\d+\.\d), from", line ).group(1)
-            ip_next_hop = re.search( r"^\s+\D+(\d+\.\d+\.\d+\.\d+)", line ).group(1)
-            routes["ips_next_hop"].append(ip_next_hop)    
+            ip_next_hop = re.search( r"^\s+\D+(\d+\.\d+\.\d+\.\d+)", line ).group(1) 
+            # Store all available next-hop IPs in a list.
+            if ip_next_hop not in routes["ips_next_hop"]:
+                routes["ips_next_hop"].append(ip_next_hop)    
     return routes
 
 # Takes a host IP, a list of directly connected IPs and a connHandle
@@ -155,11 +157,11 @@ def gatherEgressInfo(host_ip, destination_ip, creds, visited_hosts):
         
 print("\nInput the SOURCE IP.")   
 #source_ip = askForIp()
-source_ip = "10.20.20.100"
+source_ip = "10.9.9.9"
 
 print("\nInput the DESTINATION IP.")   
 #destination_ip = askForIp()
-destination_ip = "10.9.9.9"
+destination_ip = "8.8.8.8"
 
 creds = askForCreds()
 
