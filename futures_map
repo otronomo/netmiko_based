@@ -1,0 +1,14 @@
+from concurrent.futures import ThreadPoolExecutor, wait, as_completed
+from netmiko import Netmiko
+
+def ssh_conn(device):
+    net_connect=Netmiko(**device)
+    return netconnect.find_prompt()
+    
+max_threads = 4
+
+with ThreadPoolExecutor(max_threads) as pool:
+    results_generator = pool.map(ssh_conn, device_list)
+    
+    for result in results_generator:
+        print(result)
